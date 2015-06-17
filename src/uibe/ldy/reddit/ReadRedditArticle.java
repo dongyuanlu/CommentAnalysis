@@ -198,8 +198,72 @@ public class ReadRedditArticle {
 	/*************************************************/	
 	
 	
-	/******************add comment*******************************/	
+	/******************add comment*******************************/
+	/**
+	 * 
+	 * Given article name, special condition, and sentiment type
+	 * 
+	 * return commentList (in which comment contains sentiment information)
+	 * 
+	 * 
+	 * @param articleName
+	 * @param condition
+	 * @param sentimentName
+	 * @return
+	 */
+	public ArrayList<RedditComment> readCommentsByArticleName(String articleName, String condition, String sentimentName){
+		String q = "SELECT * FROM " + RedditConfig.redditCommentTable 
+				+ " WHERE link_id='" + articleName + "' " + condition;
+		Statement st = sql.getStatement();
+		
+		ArrayList<RedditComment> commentList = null;
+		
+		try {
+			ResultSet rs = st.executeQuery(q);
+			if(!rs.wasNull()){
+				commentList = new ArrayList<RedditComment>();
+				while(rs.next()){
+					RedditComment comment = new RedditComment();
+					
+					comment.setAuthor(rs.getString("author"));
+					comment.setBody(rs.getString("body"));
+					comment.setCreated(rs.getLong("created"));
+					comment.setCreated_utc(rs.getLong("created_utc"));
+					comment.setDowns(rs.getInt("downs"));
+					comment.setId(rs.getString("id"));
+					comment.setLink_id(rs.getString("link_id"));
+					comment.setName(rs.getString("name"));
+					comment.setParent_id(rs.getString("parent_id"));
+					comment.setScore(rs.getInt("score"));
+					comment.setUps(rs.getInt("ups"));
+				
+					addCommentSentiment(comment, sentimentName);
+					
+					commentList.add(comment);
+				}
+			}
+			
+			
+			rs.close();
+			st.close();
+			
+		} catch (SQLException e) {			
+			e.printStackTrace();			
+		}
+		return commentList;
+
+	}
 	
+	
+	/**
+	 * 
+	 * Given articleName, and special condition
+	 * Return comment list from table
+	 * 
+	 * @param articleName
+	 * @param condition
+	 * @return
+	 */
 	public ArrayList<RedditComment> readCommentsByArticleName(String articleName, String condition){
 		String q = "SELECT * FROM " + RedditConfig.redditCommentTable 
 				+ " WHERE link_id='" + articleName + "' " + condition;
@@ -246,6 +310,86 @@ public class ReadRedditArticle {
 		return readCommentsByArticleName(articleName, "");
 	}
 	
+	
+	
+	/**
+	 * Return comment list of which parent_id is parentId
+	 * @param parentid
+	 * @return
+	 */
+	public ArrayList<RedditComment> readNestedCommentsByParentId(String parentId, String condition){
+		String q = "SELECT * FROM " + RedditConfig.redditCommentTable 
+				+ " WHERE parent_id='" + parentId + "' " + condition;
+		Statement st = sql.getStatement();
+		
+		ArrayList<RedditComment> commentList = null;
+		
+		try {
+			ResultSet rs = st.executeQuery(q);
+			if(!rs.wasNull()){
+				commentList = new ArrayList<RedditComment>();
+				while(rs.next()){
+					RedditComment comment = new RedditComment();
+					
+					comment.setAuthor(rs.getString("author"));
+					comment.setBody(rs.getString("body"));
+					comment.setCreated(rs.getLong("created"));
+					comment.setCreated_utc(rs.getLong("created_utc"));
+					comment.setDowns(rs.getInt("downs"));
+					comment.setId(rs.getString("id"));
+					comment.setLink_id(rs.getString("link_id"));
+					comment.setName(rs.getString("name"));
+					comment.setParent_id(rs.getString("parent_id"));
+					comment.setScore(rs.getInt("score"));
+					comment.setUps(rs.getInt("ups"));
+				
+					commentList.add(comment);
+				}
+			}
+			
+			
+			rs.close();
+			st.close();
+			
+		} catch (SQLException e) {			
+			e.printStackTrace();			
+		}
+		return commentList;
+	}
+	
+	
+	/**
+	 * Given RedditComment, add its sentiment
+	 * 
+	 * @param comment
+	 * @param sentimentName
+	 */
+	public void addCommentSentiment(RedditComment comment, String sentimentName){
+		String name = comment.getName();
+		String q = "SELECT * FROM " + RedditConfig.redditCommentSentimentTable 
+				+ " WHERE name='" + name + "' " + condition;
+		Statement st = sql.getStatement();
+		
+		try {
+			ResultSet rs = st.executeQuery(q);
+			if(!rs.wasNull()){
+				while(rs.next()){					
+					comment.setPreprocessedBody(rs.getString("body_preprocessed"));
+					comment.setSentimentPos(rs.getInt(sentimentName + "_pos"));
+					comment.setSentimentNeg(rs.getInt(sentimentName + "_neg"));
+				}
+			}
+			
+			
+			rs.close();
+			st.close();
+			
+		} catch (SQLException e) {			
+			e.printStackTrace();			
+		}
+
+		
+	}
 	
 	/**
 	 * Given article object, add comment list into this article

@@ -23,6 +23,12 @@ public class RedditComment {
 	private Long created;
 	
 	private Long created_utc;	/*different with created*/
+	
+	private String preprocessedBody = "";
+	
+	private int sentimentPos = 0;
+	
+	private int sentimentNeg = 0;
 
 	public String getLink_id() {
 		return link_id;
@@ -110,6 +116,30 @@ public class RedditComment {
 
 	public void setDowns(int downs) {
 		this.downs = downs;
+	}
+
+	public int getSentimentPos() {
+		return sentimentPos;
+	}
+
+	public void setSentimentPos(int sentimentPos) {
+		this.sentimentPos = sentimentPos;
+	}
+
+	public int getSentimentNeg() {
+		return sentimentNeg;
+	}
+
+	public void setSentimentNeg(int sentimentNeg) {
+		this.sentimentNeg = sentimentNeg;
+	}
+
+	public String getPreprocessedBody() {
+		return preprocessedBody;
+	}
+
+	public void setPreprocessedBody(String preprocessedBody) {
+		this.preprocessedBody = preprocessedBody;
 	}
 
 	
