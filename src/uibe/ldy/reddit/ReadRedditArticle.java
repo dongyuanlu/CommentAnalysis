@@ -203,7 +203,7 @@ public class ReadRedditArticle {
 	 * 
 	 * Given article name, special condition, and sentiment type
 	 * 
-	 * return commentList (in which comment contains sentiment information)
+	 * return commentMap (in which comment contains sentiment information)
 	 * 
 	 * 
 	 * @param articleName
@@ -211,17 +211,17 @@ public class ReadRedditArticle {
 	 * @param sentimentName
 	 * @return
 	 */
-	public ArrayList<RedditComment> readCommentsByArticleName(String articleName, String condition, String sentimentName){
+	public HashMap<String, RedditComment> readCommentsByArticleName(String articleName, String condition, String sentimentName){
 		String q = "SELECT * FROM " + RedditConfig.redditCommentTable 
 				+ " WHERE link_id='" + articleName + "' " + condition;
 		Statement st = sql.getStatement();
 		
-		ArrayList<RedditComment> commentList = null;
+		HashMap<String, RedditComment> commentMap = null;
 		
 		try {
 			ResultSet rs = st.executeQuery(q);
 			if(!rs.wasNull()){
-				commentList = new ArrayList<RedditComment>();
+				commentMap = new HashMap<String, RedditComment>();
 				while(rs.next()){
 					RedditComment comment = new RedditComment();
 					
@@ -239,7 +239,7 @@ public class ReadRedditArticle {
 				
 					addCommentSentiment(comment, sentimentName);
 					
-					commentList.add(comment);
+					commentMap.put(comment.getName(), comment);
 				}
 			}
 			
@@ -250,7 +250,7 @@ public class ReadRedditArticle {
 		} catch (SQLException e) {			
 			e.printStackTrace();			
 		}
-		return commentList;
+		return commentMap;
 
 	}
 	

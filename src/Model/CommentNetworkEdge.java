@@ -8,7 +8,7 @@ public class CommentNetworkEdge {
 	
 	private int total = 0; //total replies between these two commenters
 	
-	private String poliarty = ""; //pos; neg; obj;
+	private int polarity = 0;//pos 1; neg -1; obj 0;
 	
 	private double weight = 0.0; //weight of edge
 	
@@ -30,12 +30,13 @@ public class CommentNetworkEdge {
 		this.total = total;
 	}
 
-	public String getPoliarty() {
-		return poliarty;
+
+	public int getPolarity() {
+		return polarity;
 	}
 
-	public void setPoliarty(String poliarty) {
-		this.poliarty = poliarty;
+	public void setPolarity(int polarity) {
+		this.polarity = polarity;
 	}
 
 	public double getWeight() {

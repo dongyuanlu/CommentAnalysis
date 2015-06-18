@@ -12,6 +12,10 @@ public class CommentNetwork {
 	
 	int totalComments = 0;
 	
+	int firstLevalComments = 0;
+	
+	int replies = 0;
+	
 	int totalCommenters = 0;
 	
 	int isolateCommenters = 0;
@@ -77,6 +81,36 @@ public class CommentNetwork {
 
 	public void setIsolateCommenters(int isolateCommenters) {
 		this.isolateCommenters = isolateCommenters;
+	}
+
+
+	public String getArticleName() {
+		return articleName;
+	}
+
+
+	public void setArticleName(String articleName) {
+		this.articleName = articleName;
+	}
+
+
+	public int getFirstLevalComments() {
+		return firstLevalComments;
+	}
+
+
+	public void setFirstLevalComments(int firstLevalComments) {
+		this.firstLevalComments = firstLevalComments;
+	}
+
+
+	public int getReplies() {
+		return replies;
+	}
+
+
+	public void setReplies(int replies) {
+		this.replies = replies;
 	}
 	
 	
