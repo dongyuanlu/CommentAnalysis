@@ -1,7 +1,7 @@
 package Model;
 
 public class CommentNetworkEdge {
-
+	
 	private String commenter_1 = "";
 	
 	private String commenter_2 = "";
@@ -22,6 +22,8 @@ public class CommentNetworkEdge {
 		this.commenter_2 = commenter_2;
 	}
 
+	
+	
 	public int getTotal() {
 		return total;
 	}
