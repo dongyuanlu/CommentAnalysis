@@ -2,8 +2,8 @@ package uibe.ldy.reddit;
 
 import java.util.ArrayList;
 
+import model.RedditComment;
 import util.WriteArrayList2File;
-import Model.RedditComment;
 
 public class NestedCommentList {
 	

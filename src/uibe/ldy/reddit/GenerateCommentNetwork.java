@@ -8,14 +8,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 
+
+
+import model.CommentNetwork;
+import model.CommentNetworkEdge;
+import model.RedditComment;
 import util.Combine;
 import util.Counter;
 import util.SQLUtil;
-import Model.CommentNetwork;
-import Model.CommentNetworkEdge;
-import Model.RedditComment;
 
 public class GenerateCommentNetwork {
+	
+	private String sentimentName = "sentiment_1";
 
 	public static void main(String[] args) {
 		GenerateCommentNetwork generator = new GenerateCommentNetwork();
@@ -26,49 +30,60 @@ public class GenerateCommentNetwork {
 
 	/**
 	 * Given articleName
-	 * Return CommentNetwork: contains an edgeList, multi network attributes
+	 * Return CommentNetwork: contains an edgeList, multiple network attributes
 	 * 
 	 * @param articleName
 	 * @return
 	 */
 	public CommentNetwork generateNetwork(String articleName){
 		CommentNetwork network = new CommentNetwork(articleName);
+		
+		CalculateEdgeAttribute calculater = new CalculateEdgeAttribute();
+		
 		Counter counterPolarity = new Counter();
 		Counter counterNum = new Counter();
-		DetectPolarity detecter = new DetectPolarity();
+		Counter countWeight = new Counter();
 		
 		HashSet<String> allCommenterSet = new HashSet<>();
 		HashSet<String> networkCommenterSet = new HashSet<>();
 		
 		ReadRedditArticle reader = new ReadRedditArticle();
-		HashMap<String, RedditComment> commentMap = reader.readCommentsByArticleName(articleName, "", "sentiment_1");
+		HashMap<String, RedditComment> commentMap = reader.readCommentsByArticleName(articleName, "ORDER BY created_utc DESC", sentimentName);
 		int firstLevel = 0;
 		
-		//generate edge
+		//generate edges
 		Iterator<String> iter = commentMap.keySet().iterator();
 		while(iter.hasNext()){
 			String commentName = iter.next();
 			RedditComment comment = commentMap.get(commentName);
-			if(comment.getParent_id().equals(comment.getLink_id())){ //if comment to article, continue
+			//if comment to article, continue
+			if(comment.getParent_id().equals(comment.getLink_id())){ 
 				allCommenterSet.add(comment.getAuthor());
 				firstLevel++;
 				continue;
 			}
 			
-			int polarity = detecter.getPolarityFromComment(comment);
+			//get commenter and replyto_commenter
 			String commenter_1 = comment.getAuthor();
-			String commenter_2 = commentMap.get(comment.getParent_id()).getAuthor();
+			String commenter_2 = commentMap.get(comment.getParent_id()).getAuthor(); //get replyto_author
 			networkCommenterSet.add(commenter_1);
 			networkCommenterSet.add(commenter_2);
 			allCommenterSet.add(commenter_1);
 			allCommenterSet.add(commenter_2);
-			counterPolarity.counter(Combine.combineTwoStr(commenter_1,commenter_2), polarity);
-			counterNum.counter(Combine.combineTwoStr(commenter_1,commenter_2));
+			
+			//Count num, polarity, weight
+			String commenterPair = Combine.combineTwoStr(commenter_1,commenter_2);
+			counterNum.counter(commenterPair);
+			counterPolarity.counter(commenterPair, calculater.getPolarityFromComment(comment));
+			int rank1 = comment.getRank();
+			int rank2 = commentMap.get(comment.getParent_id()).getRank();
+			countWeight.counter(commenterPair, calculater.getWeightFromCommentRank(rank1, rank2));
 		}
 		
 		//add edges to network
-		HashMap<String, Integer> commenterPolarityMap = counterPolarity.getStrHashMap();
-		HashMap<String, Integer> commentNumMap = counterNum.getStrHashMap();
+		HashMap<String, Integer> commenterPolarityMap = counterPolarity.getStrHashMap(); //record edge-polarity
+		HashMap<String, Integer> commenterNumMap = counterNum.getStrHashMap();	//record edge-appearNum
+		HashMap<String, Double> commenterWeightMap = countWeight.getStrDoubleHashMap(); //record edge-weight
 		Iterator<String> iterC = commenterPolarityMap.keySet().iterator();
 		while(iterC.hasNext()){
 			
@@ -86,7 +101,9 @@ public class GenerateCommentNetwork {
 //			}
 			edge.setPolarity(pol); ////set polarity of edge
 			
-			edge.setTotal(commentNumMap.get(commenterPair)); //set total comments count between these two commenters
+			edge.setTotal(commenterNumMap.get(commenterPair)); //set total comments count between these two commenters
+			
+			edge.setWeight(commenterWeightMap.get(commenterPair));
 			
 			network.addEdge(edge);
 		}
@@ -101,6 +118,9 @@ public class GenerateCommentNetwork {
 		
 		return network;
 	}
+	
+	
+	
 	
 	///////////////////////////////////////////////////////////////////
 	/////////////////////Write Network Into Database///////////////////
@@ -178,7 +198,7 @@ public class GenerateCommentNetwork {
 				ps.setInt(4, edge.getTotal());
 				ps.setInt(5, edge.getPolarity());
 				
-				ps.setDouble(6, 0.0);
+				ps.setDouble(6, edge.getWeight());
 			
 				ps.addBatch();
 			}

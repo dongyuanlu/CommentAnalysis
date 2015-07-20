@@ -2,7 +2,7 @@ package uibe.ldy.sentistrength;
 
 import java.util.ArrayList;
 
-import Model.RedditComment;
+import model.RedditComment;
 import uibe.ldy.reddit.ReadRedditArticle;
 import util.PreProcess;
 import util.WriteArrayList2File;

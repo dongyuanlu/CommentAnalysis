@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 public class RedditComment {
 	
@@ -14,6 +14,8 @@ public class RedditComment {
 	
 	private String author = "";
 	
+	private String replyto_author = ""; //author of replied comment, if "", reply to article
+	
 	private int ups;
 	
 	private int downs;
@@ -26,9 +28,11 @@ public class RedditComment {
 	
 	private String preprocessedBody = "";
 	
-	private int sentimentPos = 0;
+	private int sentimentPos;
 	
-	private int sentimentNeg = 0;
+	private int sentimentNeg;
+	
+	private int rank = 0;
 
 	public String getLink_id() {
 		return link_id;
@@ -140,6 +144,22 @@ public class RedditComment {
 
 	public void setPreprocessedBody(String preprocessedBody) {
 		this.preprocessedBody = preprocessedBody;
+	}
+
+	public int getRank() {
+		return rank;
+	}
+
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
+
+	public String getReplyto_author() {
+		return replyto_author;
+	}
+
+	public void setReplyto_author(String replyto_author) {
+		this.replyto_author = replyto_author;
 	}
 
 	

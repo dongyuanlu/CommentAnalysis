@@ -11,6 +11,8 @@ public class Counter {
 	HashMap<Integer, Integer> intHashMap = new HashMap<Integer,Integer>();
 	
 	HashMap<String, Integer> strHashMap = new HashMap<String, Integer>();
+	
+	HashMap<String, Double> strDoubleHashMap = new HashMap<String, Double>();
 	/**
 	 * Count "number" appear
 	 * 
@@ -57,6 +59,20 @@ public class Counter {
 			strHashMap.put(string, c);
 		}else{
 			strHashMap.put(string, n);
+		}
+	}
+	
+	/**
+	 * Count "string" appear with double weight
+	 * @param string
+	 * @param d
+	 */
+	public void counter(String string, double d){
+		if(strDoubleHashMap.containsKey(string)){
+			double dd = strDoubleHashMap.get(string) + d;
+			strDoubleHashMap.put(string, dd);
+		}else{
+			strDoubleHashMap.put(string, d);
 		}
 	}
 
@@ -283,6 +299,11 @@ public class Counter {
 
 	public HashMap<String, Integer> getStrHashMap() {
 		return strHashMap;
+	}
+
+
+	public HashMap<String, Double> getStrDoubleHashMap() {
+		return strDoubleHashMap;
 	}
 	
 	

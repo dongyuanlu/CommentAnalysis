@@ -1,24 +1,26 @@
-package Model;
+package model;
 
 import java.util.ArrayList;
 
 public class CommentNetwork {
 	
-	String articleName = ""; //the article name
+	private String articleName = ""; //the article name
 	
-	ArrayList<String> nodeList = new ArrayList<String>();
+	private ArrayList<String> nodeList = new ArrayList<String>();
 	
-	ArrayList<CommentNetworkEdge> edgeList = new ArrayList<>();
+	private ArrayList<CommentNetworkEdge> edgeList = new ArrayList<>();
 	
-	int totalComments = 0;
+	private int totalComments = 0;	//the number of total comments
 	
-	int firstLevalComments = 0;
+	private int firstLevalComments = 0;	// the number of first level comments
 	
-	int replies = 0;
+	private int firstLevalIsolateComments = 0; // the number of first level comments with no replies
 	
-	int totalCommenters = 0;
+	private int replies = 0;
 	
-	int isolateCommenters = 0;
+	private int totalCommenters = 0;
+	
+	private int isolateCommenters = 0;
 	
 	public CommentNetwork(String articleName){
 		this.articleName = articleName;
@@ -111,6 +113,16 @@ public class CommentNetwork {
 
 	public void setReplies(int replies) {
 		this.replies = replies;
+	}
+
+
+	public int getFirstLevalIsolateComments() {
+		return firstLevalIsolateComments;
+	}
+
+
+	public void setFirstLevalIsolateComments(int firstLevalIsolateComments) {
+		this.firstLevalIsolateComments = firstLevalIsolateComments;
 	}
 	
 	

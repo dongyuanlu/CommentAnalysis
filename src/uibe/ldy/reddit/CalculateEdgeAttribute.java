@@ -1,8 +1,8 @@
 package uibe.ldy.reddit;
 
-import Model.RedditComment;
+import model.RedditComment;
 
-public class DetectPolarity {
+public class CalculateEdgeAttribute {
 	
 	
 	/**
@@ -31,4 +31,21 @@ public class DetectPolarity {
 		return polarity;
 	}
 
+	
+	/**
+	 * Given the rank position of two comments
+	 * Return the weight of this comment reply edge
+	 * @param rank1
+	 * @param rank2
+	 * @return
+	 */
+	public double getWeightFromCommentRank(int rank1, int rank2){
+		
+		int dis = Math.abs(rank2-rank1);
+		if(dis == 0){
+			return 0.0;
+		}else{
+			return (double) 1.0/ dis;
+		}
+	}
 }

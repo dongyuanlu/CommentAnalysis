@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import Model.RedditArticle;
-import Model.RedditArticleMedia;
-import Model.RedditComment;
+import model.RedditArticle;
+import model.RedditArticleMedia;
+import model.RedditComment;
 import util.SQLUtil;
 
 /**
@@ -45,6 +45,11 @@ public class ReadRedditArticle {
 		return articleIndexMap;
 	}
 
+	
+	
+	//////////////////////////////////////////////////////////////////
+	////////////////////READ article//////////////////////////////////
+	//////////////////////////////////////////////////////////////////
 
 	/****************aticleIndexMap*********************************/
 	/**
@@ -55,7 +60,7 @@ public class ReadRedditArticle {
 	 */
 	public void readArticleIndexMap(){
 		
-		String q = "SELECT * FROM " + listTableName + " " + condition;
+		String q = "SELECT * FROM " + listTableName + " WHERE " + condition;
 		Statement st = sql.getStatement();
 		try {
 			ResultSet rs = st.executeQuery(q);
@@ -77,6 +82,35 @@ public class ReadRedditArticle {
 
 	}
 	/*************************************************/
+	
+	/**
+	 * Get link_id list from comment table
+	 * 
+	 * @param condition
+	 * @return
+	 */
+	public ArrayList<String> readLinkIdListFromComments(String condition){
+		ArrayList<String> linkIdList = new ArrayList<String>();
+		
+		String q = "SELECT DISTINCT link_id FROM " + RedditConfig.redditCommentTable + " WHERE " + condition;
+		Statement st = sql.getStatement();
+		try {
+			ResultSet rs = st.executeQuery(q);
+			
+			while(rs.next()){
+				linkIdList.add(rs.getString("link_id"));		
+			}
+			
+			rs.close();
+			st.close();
+			
+		} catch (SQLException e) {			
+			e.printStackTrace();			
+		}
+		
+		return linkIdList;
+	}
+	
 	
 	/****************articleList*********************************/	
 	/**
@@ -128,6 +162,10 @@ public class ReadRedditArticle {
 	}
 	/*************************************************/
 	
+	
+	////////////////////////////////////////////////////////////
+	///////////////////  READ media  ///////////////////////////
+	////////////////////////////////////////////////////////////
 	
 	/*******************add Media******************************/	
 	
@@ -197,8 +235,69 @@ public class ReadRedditArticle {
 	}
 	/*************************************************/	
 	
+	/////////////////////////////////////////////////////////////////
+	///////////////////    READ comment   ///////////////////////////
+	/////////////////////////////////////////////////////////////////
 	
-	/******************add comment*******************************/
+	
+	/******************READ comment*******************************/
+	
+	/**
+	 * Read Comments Map by condition and sentimentName
+	 * Return a HashMap of comments
+	 * 
+	 * 
+	 * @param condition
+	 * @param sentimentName
+	 * @return
+	 */
+	public HashMap<String, RedditComment> readCommentsByCondition(String condition, String sentimentName){
+		String q = "SELECT * FROM " + RedditConfig.redditCommentTable 
+				+ " WHERE " + condition;
+		Statement st = sql.getStatement();
+		
+		HashMap<String, RedditComment> commentMap = null;
+		int rank = 0;
+		
+		try {
+			ResultSet rs = st.executeQuery(q);
+			if(!rs.wasNull()){
+				commentMap = new HashMap<String, RedditComment>();
+				while(rs.next()){
+					RedditComment comment = new RedditComment();
+					
+					comment.setAuthor(rs.getString("author"));
+					comment.setReplyto_author(rs.getString("replyto_author"));
+					comment.setBody(rs.getString("body"));
+					comment.setCreated(rs.getLong("created"));
+					comment.setCreated_utc(rs.getLong("created_utc"));
+					comment.setDowns(rs.getInt("downs"));
+					comment.setId(rs.getString("id"));
+					comment.setLink_id(rs.getString("link_id"));
+					comment.setName(rs.getString("name"));
+					comment.setParent_id(rs.getString("parent_id"));
+					comment.setScore(rs.getInt("score"));
+					comment.setUps(rs.getInt("ups"));
+					comment.setRank(rank++);
+				
+					addCommentSentiment(comment, sentimentName);
+					
+					commentMap.put(comment.getName(), comment);
+				}
+			}
+			
+			rs.close();
+			st.close();
+			
+		} catch (SQLException e) {			
+			e.printStackTrace();			
+		}
+		return commentMap;
+
+	}
+	
+	
+	
 	/**
 	 * 
 	 * Given article name, special condition, and sentiment type
@@ -212,46 +311,11 @@ public class ReadRedditArticle {
 	 * @return
 	 */
 	public HashMap<String, RedditComment> readCommentsByArticleName(String articleName, String condition, String sentimentName){
-		String q = "SELECT * FROM " + RedditConfig.redditCommentTable 
-				+ " WHERE link_id='" + articleName + "' " + condition;
-		Statement st = sql.getStatement();
 		
-		HashMap<String, RedditComment> commentMap = null;
+		String newCondition = "link_id='" + articleName + "' " + condition;
 		
-		try {
-			ResultSet rs = st.executeQuery(q);
-			if(!rs.wasNull()){
-				commentMap = new HashMap<String, RedditComment>();
-				while(rs.next()){
-					RedditComment comment = new RedditComment();
-					
-					comment.setAuthor(rs.getString("author"));
-					comment.setBody(rs.getString("body"));
-					comment.setCreated(rs.getLong("created"));
-					comment.setCreated_utc(rs.getLong("created_utc"));
-					comment.setDowns(rs.getInt("downs"));
-					comment.setId(rs.getString("id"));
-					comment.setLink_id(rs.getString("link_id"));
-					comment.setName(rs.getString("name"));
-					comment.setParent_id(rs.getString("parent_id"));
-					comment.setScore(rs.getInt("score"));
-					comment.setUps(rs.getInt("ups"));
-				
-					addCommentSentiment(comment, sentimentName);
-					
-					commentMap.put(comment.getName(), comment);
-				}
-			}
-			
-			
-			rs.close();
-			st.close();
-			
-		} catch (SQLException e) {			
-			e.printStackTrace();			
-		}
-		return commentMap;
-
+		return readCommentsByCondition(newCondition, sentimentName);
+		
 	}
 	
 	
@@ -279,6 +343,7 @@ public class ReadRedditArticle {
 					RedditComment comment = new RedditComment();
 					
 					comment.setAuthor(rs.getString("author"));
+					comment.setReplyto_author(rs.getString("replyto_author"));
 					comment.setBody(rs.getString("body"));
 					comment.setCreated(rs.getLong("created"));
 					comment.setCreated_utc(rs.getLong("created_utc"));
@@ -306,6 +371,12 @@ public class ReadRedditArticle {
 	}
 	
 	
+	/**
+	 * Return commentList of articleName
+	 * 
+	 * @param articleName
+	 * @return
+	 */
 	public ArrayList<RedditComment> readCommentsByArticleName(String articleName){
 		return readCommentsByArticleName(articleName, "");
 	}
@@ -332,6 +403,7 @@ public class ReadRedditArticle {
 					RedditComment comment = new RedditComment();
 					
 					comment.setAuthor(rs.getString("author"));
+					comment.setReplyto_author(rs.getString("replyto_author"));
 					comment.setBody(rs.getString("body"));
 					comment.setCreated(rs.getLong("created"));
 					comment.setCreated_utc(rs.getLong("created_utc"));
