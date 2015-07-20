@@ -8,5 +8,12 @@
 	<classpathentry kind="lib" path="lib/jlangdetect-0.3.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.7-bin.jar"/>
 	<classpathentry kind="lib" path="lib/SentiStrengthCom.jar"/>
+	<classpathentry kind="lib" path="lib/collections-generic-4.01.jar"/>
+	<classpathentry kind="lib" path="lib/colt.jar"/>
+	<classpathentry kind="lib" path="lib/concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/jung-algorithms-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jung-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jung-graph-impl-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jung-io-2.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
