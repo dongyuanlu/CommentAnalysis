@@ -12,7 +12,7 @@ public class NestedCommentList {
 	private String condition = "ORDER BY created_utc desc";
 	
 	ArrayList<String> write2File = new ArrayList<>();
-	ReadRedditArticle reader = new ReadRedditArticle();
+	ReadReddit reader = new ReadReddit();
 	
 	
 	public static void main(String[] args){
@@ -33,7 +33,7 @@ public class NestedCommentList {
 
 	
 	public void getReplyComments(String parentId, int nestedLevel){
-		ArrayList<RedditComment> commentList = reader.readNestedCommentsByParentId(parentId, condition);
+		ArrayList<RedditComment> commentList = reader.readReplytoCommentByParentId(parentId, condition);
 		
 		for(int i = 0 ; i < commentList.size(); i++){
 			RedditComment comment = commentList.get(i);

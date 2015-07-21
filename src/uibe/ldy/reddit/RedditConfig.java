@@ -14,7 +14,7 @@ public class RedditConfig {
 	
 	public static String redditArticleNetworkTable = "reddit_article_network";
 	
-	public static String redditCommenterNetworkTable = "reddit_commenter_network";
+	public static String redditCommenterLinkTable = "reddit_commenter_link";
 	
 	public static String database = "data/database.property";
 }

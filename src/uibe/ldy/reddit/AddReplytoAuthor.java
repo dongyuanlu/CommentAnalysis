@@ -25,7 +25,7 @@ public class AddReplytoAuthor {
 	 * 
 	 */
 	public void addReplytoAuthor(){
-		ReadRedditArticle reader = new ReadRedditArticle();
+		ReadReddit reader = new ReadReddit();
 		ArrayList<String> linkIdList = reader.readLinkIdListFromComments("replyto_author IS NULL");
 		
 		for(int i = 0; i < linkIdList.size(); i++){

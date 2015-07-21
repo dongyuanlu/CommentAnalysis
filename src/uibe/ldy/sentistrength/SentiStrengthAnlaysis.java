@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import model.RedditComment;
-import uibe.ldy.reddit.ReadRedditArticle;
+import uibe.ldy.reddit.ReadReddit;
 import uibe.ldy.reddit.RedditConfig;
 import uk.ac.wlv.sentistrength.SentiStrength;
 import util.PreProcess;
@@ -26,7 +26,7 @@ public class SentiStrengthAnlaysis {
 	
 	
 	public static void main(String[] args){
-		ReadRedditArticle reader = new ReadRedditArticle();
+		ReadReddit reader = new ReadReddit();
 		ArrayList<String> articleList = reader.readLinkIdListFromComments("1");
 		
 		SentiStrengthAnlaysis sentiAnalyzer = new SentiStrengthAnlaysis();
@@ -52,7 +52,7 @@ public class SentiStrengthAnlaysis {
 	 */
 	public HashMap<String, RedditComment> detectSentiment(String articleName, String sentimentName){
 		
-		ReadRedditArticle reader = new ReadRedditArticle();
+		ReadReddit reader = new ReadReddit();
 		String condition = "AND name NOT IN (SELECT name FROM " + RedditConfig.redditCommentSentimentTable + ")";
 		HashMap<String, RedditComment> commentMap = reader.readCommentsByArticleName(articleName, condition, sentimentName);
 		

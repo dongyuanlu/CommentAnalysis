@@ -3,7 +3,7 @@ package uibe.ldy.sentistrength;
 import java.util.ArrayList;
 
 import model.RedditComment;
-import uibe.ldy.reddit.ReadRedditArticle;
+import uibe.ldy.reddit.ReadReddit;
 import util.PreProcess;
 import util.WriteArrayList2File;
 
@@ -27,7 +27,7 @@ public class Input4SentiStrength {
 	 * 
 	 */
 	public void generateInput4SentiStrength(){
-		ReadRedditArticle reader = new ReadRedditArticle();
+		ReadReddit reader = new ReadReddit();
 		
 		ArrayList<RedditComment> commentList = reader.readCommentsByArticleName("t3_1zgwte");
 		
