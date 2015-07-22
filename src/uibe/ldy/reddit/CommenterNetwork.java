@@ -14,6 +14,27 @@ import util.Combine;
 import util.Counter;
 import util.SQLUtil;
 
+
+/**
+ * 
+ * A commenter network
+ * Contains:
+ * 1. commenter network attributes:
+ * 		commenter size
+ * 		isolate commenter size
+ * 		totalComments
+ * 		firstLevelComments
+ * 		...
+ * 2. Network list: 
+ * 		representing evolving network list of commenters
+ * 
+ * 
+ * main: 
+ * generate such commenter network and write networks and attributes into database
+ * 
+ * @author Administrator
+ *
+ */
 public class CommenterNetwork {
 	
 	private String sentimentName = "sentiment_1";
